@@ -1,5 +1,8 @@
 OBJ = obj/mydef.o obj/myerrno.o obj/myhandle_cmd.o obj/mylist.o
 INC = -I include
+DIRS = obj/
+
+all: mydirs mydef
 
 mydef: $(OBJ) 
 	gcc -o $@ $(OBJ) $(INC)
@@ -16,10 +19,13 @@ obj/myhandle_cmd.o: src/myhandle_cmd.c include/myerrno.h include/myhandle_cmd.h 
 obj/mylist.o: src/mylist.c include/mylist.h include/myerrno.h
 	gcc -o $@ -c src/mylist.c $(INC)
 
+mydirs:
+	@mkdir -p $(DIRS)
+
 clean:
-	-rm -f $(OBJ)
+	-rm -rf obj
 
 distclean: clean
 	-rm -f mydef
 
-.PHONY: clean distclean
+.PHONY: all clean distclean mydirs
