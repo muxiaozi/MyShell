@@ -1,3 +1,5 @@
+start
+
 def a
 def b
 print a b
@@ -7,3 +9,5 @@ print a b
 add a b
 add b a
 print a
+
+end

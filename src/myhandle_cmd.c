@@ -1,5 +1,5 @@
 #include "myhandle_cmd.h"
-#include "mydef.h"
+#include "mylist.h"
 #include "myerrno.h"
 #include <stdio.h>
 #include <unistd.h>
@@ -14,9 +14,11 @@ static void cmdMul(int argc, char (*argv)[64]);
 static void cmdDiv(int argc, char (*argv)[64]);
 static void cmdPrint(int argc, char (*argv)[64]);
 static void cmdHelp(int argc, char (*argv)[64]);
+static void cmdInit(int argc, char (*argv)[64]);
 
 const HandlerTable g_HandlerTable[] = 
 {
+	{"start", cmdInit},
 	{"def", cmdDef},
 	{"set", cmdSet},
 	{"del", cmdDel},
@@ -25,7 +27,8 @@ const HandlerTable g_HandlerTable[] =
 	{"mul", cmdMul},
 	{"div", cmdDiv},
 	{"print", cmdPrint},
-	{"help", cmdHelp}
+	{"help", cmdHelp},
+	{"end", cmdInit}
 };
 
 const int HANDLER_COUNT = sizeof(g_HandlerTable) / sizeof(HandlerTable);
@@ -165,5 +168,10 @@ void cmdHelp(int argc, char (*argv)[64])
 		write(STDOUT_FILENO, buffer, len);
 	}
 	close(fd);
+}
+
+void cmdInit(int argc, char (*argv)[64])
+{
+	removeAllElements();
 }
 

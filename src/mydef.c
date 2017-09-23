@@ -1,21 +1,21 @@
-#include "common.h"
-#include "myerrno.h"
-#include "mydef.h"
 #include "myhandle_cmd.h"
+#include <stdio.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <errno.h>
+#include <string.h>
 
+//Handle command
 int handleCmd(char *cmd);
+//earse space before cmd and after cmd
 char *trim(char *cmd);
-void readLine(char *cmd, int *argc, char (*argv)[64]);
+//parse command to argv
+int readLine(char *cmd, int *argc, char (*argv)[64]);
+//change A-Z to a-z
 char *toLower(char *str);
-void onInit();
-void onExit();
-
-Node *head; //data head
 
 int main(int argc, char **argv)
 {
-	onInit();
-	
 	char buffer[1024];
 	if(argc < 2) //read terminal
 	{
@@ -54,31 +54,24 @@ int main(int argc, char **argv)
 	return 0;
 }
 
-void onInit()
-{
-	g_my_errno = 0;
-	head = NULL;
-	atexit(onExit); //register exit function
-}
-
-void onExit()
-{
-	remoteAllElements();
-}
-
 int handleCmd(char *cmd)
 {
 	int argc, i;
 	char argv[8][64];
-	readLine(cmd, &argc, argv);
-	if(argc == 0) return 0; //no content
+	if(readLine(cmd, &argc, argv))
+	{
+		//no input
+		return;
+	}
 
+	//Exit
 	if(!strcmp(toLower(argv[0]), "exit"))
 	{
+		handleCmd("end");
 		printf("Bye!\n");
 		return -1;
 	}
-
+	//Search handler table
 	for(i = 0; i < HANDLER_COUNT; i++)
 	{
 		if(!strcmp(g_HandlerTable[i].name, toLower(argv[0])))
@@ -87,8 +80,11 @@ int handleCmd(char *cmd)
 			break;
 		}
 	}
+	//Unknow command
 	if(i >= HANDLER_COUNT) 
+	{
 		printf("%s : Unknow command!\n", argv[0]);
+	}
 	
 	return 0;
 }
@@ -101,7 +97,7 @@ char *trim(char *cmd)
 	return cmd;
 }
 
-void readLine(char *cmd, int *argc, char (*argv)[64])
+int readLine(char *cmd, int *argc, char (*argv)[64])
 {
 	*argc = 0;
 	while(*cmd != '\0')
@@ -111,6 +107,7 @@ void readLine(char *cmd, int *argc, char (*argv)[64])
 		argv[(*argc)++][i] = '\0';
 		while(*cmd == ' ') cmd++;
 	}
+	return *argc == 0;
 }
 
 char *toLower(char *str)
@@ -122,115 +119,5 @@ char *toLower(char *str)
 		tmp++;
 	}
 	return str;
-}
-
-
-int addElement(const char *name)
-{
-	Node *tmp;
-	if(head == NULL)
-	{
-		head = tmp = (Node*)malloc(sizeof(Node));
-	}else
-	{
-		for(tmp = head; ; tmp = tmp -> next)
-		{
-			if(!strcmp(tmp->name, name))
-			{
-				g_my_errno = MYERR_ALREADY_HAS_NAME;
-				return g_my_errno;
-			}
-			
-			if(tmp->next == NULL) //last element
-				break;
-		}
-
-		tmp->next = (Node*)malloc(sizeof(Node));
-		tmp = tmp -> next;
-	}
-	tmp->next = NULL;
-	strcpy(tmp->name, name);
-	tmp->hasValue = 0;
-	tmp->value = 0;
-
-	g_my_errno = MYERR_SUCCESS;
-	return g_my_errno;
-}
-
-int setValue(const char *name, element value)
-{
-	Node *tmp;
-	for(tmp = head; tmp != NULL; tmp = tmp->next)
-	{
-		if(!strcmp(tmp->name, name))
-		{
-			tmp->hasValue = 1;
-			tmp->value = value;
-			break;
-		}
-	}
-	if(tmp == NULL)
-	{
-		g_my_errno = MYERR_NO_SUCH_NAME;
-	}else{
-		g_my_errno = MYERR_SUCCESS;
-	}
-	return g_my_errno;
-}
-
-int getValue(const char *name, element *value)
-{
-	Node *tmp;
-	for(tmp = head; tmp != NULL; tmp = tmp->next)
-	{
-		if(!strcmp(tmp->name, name))
-		{
-			if(tmp->hasValue)
-			{
-				*value = tmp->value;
-				g_my_errno = MYERR_SUCCESS;
-			}else
-			{
-				g_my_errno = MYERR_NO_VALUE;
-			}
-			break; 
-		}
-	}
-	if(tmp == NULL)
-		g_my_errno = MYERR_NO_SUCH_NAME;
-	return g_my_errno;
-}
-
-int removeElement(const char *name)
-{
-	Node *tmp, *pre;
-	for(pre = tmp = head; tmp != NULL; tmp = tmp->next)
-	{
-		if(!strcmp(tmp->name, name))
-		{
-			if(head == tmp)
-				head = tmp->next;
-			else
-				pre->next = tmp->next;
-			free(tmp);
-			g_my_errno = MYERR_SUCCESS;
-			break;
-		}
-		pre = tmp;
-	}
-	if(tmp == NULL)
-		g_my_errno = MYERR_NO_SUCH_NAME;
-	return g_my_errno;
-}
-
-int remoteAllElements()
-{
-	Node *tmp;
-	while(head != NULL){
-		tmp = head->next;
-		free(head);
-		head = tmp;
-	}
-	head = NULL;
 }
 
