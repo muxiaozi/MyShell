@@ -61,7 +61,7 @@ int handleCmd(char *cmd)
 	if(readLine(cmd, &argc, argv))
 	{
 		//no input
-		return;
+		return 0;
 	}
 
 	//Exit
