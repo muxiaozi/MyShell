@@ -7,7 +7,7 @@
 
 static void cmdDef(int argc, char (*argv)[64]);
 static void cmdSet(int argc, char (*argv)[64]);
-static void cmdDel(int argc, char (*argv)[64]);
+static void cmdUndef(int argc, char (*argv)[64]);
 static void cmdAdd(int argc, char (*argv)[64]);
 static void cmdSub(int argc, char (*argv)[64]);
 static void cmdMul(int argc, char (*argv)[64]);
@@ -21,7 +21,7 @@ const HandlerTable g_HandlerTable[] =
 	{"start", cmdInit},
 	{"def", cmdDef},
 	{"set", cmdSet},
-	{"del", cmdDel},
+	{"undef", cmdUndef},
 	{"add", cmdAdd},
 	{"sub", cmdSub},
 	{"mul", cmdMul},
@@ -56,7 +56,7 @@ void cmdSet(int argc, char (*argv)[64])
 		printErr(argv[1]);
 }
 
-void cmdDel(int argc, char (*argv)[64])
+void cmdUndef(int argc, char (*argv)[64])
 {
 	int i;
 	for(i = 1; i < argc; i++)

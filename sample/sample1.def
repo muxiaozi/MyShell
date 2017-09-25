@@ -3,11 +3,16 @@ start
 def a
 def b
 print a b
+
 set a 1
 set b 2
 print a b
+
 add a b
 add b a
-print a
+print a b
+
+undef a
+print a b
 
 end
