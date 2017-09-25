@@ -8,7 +8,6 @@ typedef struct
 	cmdHandler handler;
 }HandlerTable;
 
-extern const HandlerTable g_HandlerTable[];
-extern const int HANDLER_COUNT;
+int handleCmd(int argc, char (*argv)[64]);
 
 #endif //__MYHANDLE_CMD_H__

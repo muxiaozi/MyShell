@@ -1,16 +1,16 @@
-#include "myhandle_cmd.h"
+#include "myhandle_cmd.h" //parseCmd(int, char(*)[64])
 #include <stdio.h>
 #include <fcntl.h>
 #include <unistd.h>
 #include <errno.h>
 #include <string.h>
 
-//Handle command
-int handleCmd(char *cmd);
+//parse command line
+int parseCmd(char *cmd);
 //earse space before cmd and after cmd
 char *trim(char *cmd);
-//parse command to argv
-int readLine(char *cmd, int *argc, char (*argv)[64]);
+//format command line to argv
+int formatCmd(char *cmd, int *argc, char (*argv)[64]);
 //change A-Z to a-z
 char *toLower(char *str);
 
@@ -24,7 +24,7 @@ int main(int argc, char **argv)
 			write(STDOUT_FILENO, "myshell> ", 9);
 			int len = read(STDIN_FILENO, buffer, sizeof(buffer));
 			buffer[len - 1] = '\0';
-			if(handleCmd(trim(buffer))) break;
+			if(parseCmd(trim(buffer))) break;
 		}
 	}else //read file
 	{
@@ -41,7 +41,7 @@ int main(int argc, char **argv)
 			if(ch == '\n')	
 			{
 				buffer[index] = '\0';
-				handleCmd(trim(buffer));
+				parseCmd(trim(buffer));
 				index = 0;
 			}else
 			{
@@ -54,36 +54,24 @@ int main(int argc, char **argv)
 	return 0;
 }
 
-int handleCmd(char *cmd)
+int parseCmd(char *cmd)
 {
-	int argc, i;
+	int argc;
 	char argv[8][64];
-	if(readLine(cmd, &argc, argv))
+	if(formatCmd(cmd, &argc, argv))
 	{
 		//no input
 		return 0;
 	}
 
-	//Exit
-	if(!strcmp(toLower(argv[0]), "exit"))
+	if(!strcmp(toLower(argv[0]), "exit")) //Exit
 	{
-		handleCmd("end");
+		parseCmd("end");
 		printf("Bye!\n");
 		return -1;
-	}
-	//Search handler table
-	for(i = 0; i < HANDLER_COUNT; i++)
+	}else
 	{
-		if(!strcmp(g_HandlerTable[i].name, toLower(argv[0])))
-		{
-			g_HandlerTable[i].handler(argc, argv);
-			break;
-		}
-	}
-	//Unknow command
-	if(i >= HANDLER_COUNT) 
-	{
-		printf("%s : Unknow command!\n", argv[0]);
+		handleCmd(argc, argv);
 	}
 	
 	return 0;
@@ -97,7 +85,7 @@ char *trim(char *cmd)
 	return cmd;
 }
 
-int readLine(char *cmd, int *argc, char (*argv)[64])
+int formatCmd(char *cmd, int *argc, char (*argv)[64])
 {
 	*argc = 0;
 	while(*cmd != '\0')

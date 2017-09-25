@@ -16,7 +16,7 @@ static void cmdPrint(int argc, char (*argv)[64]);
 static void cmdHelp(int argc, char (*argv)[64]);
 static void cmdInit(int argc, char (*argv)[64]);
 
-const HandlerTable g_HandlerTable[] = 
+static const HandlerTable g_HandlerTable[] = 
 {
 	{"start", cmdInit},
 	{"def", cmdDef},
@@ -31,7 +31,28 @@ const HandlerTable g_HandlerTable[] =
 	{"end", cmdInit}
 };
 
-const int HANDLER_COUNT = sizeof(g_HandlerTable) / sizeof(HandlerTable);
+//counts of commands
+#define HANDLER_COUNT (sizeof(g_HandlerTable) / sizeof(HandlerTable))
+
+int handleCmd(int argc, char (*argv)[64])
+{
+	char *toLower(char*);
+	int i;
+	//Search handler table
+	for(i = 0; i < HANDLER_COUNT; i++)
+	{
+		if(!strcmp(g_HandlerTable[i].name, toLower(argv[0])))
+		{
+			g_HandlerTable[i].handler(argc, argv);
+			break;
+		}
+	}
+	//Unknow command
+	if(i >= HANDLER_COUNT) 
+	{
+		printf("%s : Unknow command!\n", argv[0]);
+	}
+}
 
 void cmdDef(int argc, char (*argv)[64])
 {
