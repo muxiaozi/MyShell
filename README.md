@@ -4,13 +4,16 @@
 Usage: mydef [FILE]...
 
 Commands
+start|end: start | end
+	clear all elements
+
 def: def [var]...
 	define some variables
 
 set: set <name> <value>
 	set value to name
 
-del: del [var]...
+undef: undef [var]...
 	delete variables that given
 
 print:	print [var]...
