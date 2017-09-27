@@ -15,11 +15,22 @@ typedef enum
 
 extern MyErrNo g_my_errno;
 
-//get error reason
+/**
+ * 获取自定义错误
+ */
 const char *getMyError();
 
-void printInfo(const char *info);
-void printErr(const char *err); 
+/**
+ * 打印系统错误信息
+ * @param msg 错误提示
+ */
+void printSystemError(const char *msg);
+
+/**
+ * 打印自定义错误信息
+ * @param msg 错误提示
+ */
+void printMyError(const char *msg);
 
 #endif //__MYERRNO_H__
 

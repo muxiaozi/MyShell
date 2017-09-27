@@ -28,7 +28,7 @@ int main(int argc, char **argv)
 		int fd = open(argv[1], O_RDONLY);	
 		if(fd < 0)
 		{
-			fprintf(stderr, "%s : %s\n", argv[1], strerror(errno));
+			printSystemError(argv[1]);
 			return -1;
 		}
 		int index = 0;
@@ -67,20 +67,23 @@ int parseCmd(char *cmd)
 	{
 		strcpy(cmd, "end");
 		parseCmd(cmd);
-		printf("Bye!\n");
+		printf("Bye!\n\n");
 		return -1;
 	}else
 	{
-		if(handleCmd(argc, argv) == -1)
+		if(handleCmd(argc, argv))
 		{
 			pid_t pid = fork();
 			if(pid < 0)
 			{
-				fprintf(stderr, "fork: %s\n", strerror(errno));
-			}if(pid == 0) //子进程执行
+				printSystemError("fork");
+			}else if(pid == 0) //子进程执行
 			{
-				execvp(argv[0], argv);
-				exit(0);
+				if(execvp(argv[0], argv) == -1)
+				{
+					printSystemError(argv[0]);
+					exit(0);
+				}
 			}else if(pid > 0)
 			{
 				wait(NULL);

@@ -73,7 +73,7 @@ void cmdDef(int argc, char *argv[])
 	for(i = 1; i < argc; i++)
 	{
 		if(addElement(argv[i]))
-			printErr(argv[i]);
+			printMyError(argv[i]);
 	}
 }
 
@@ -82,11 +82,11 @@ void cmdSet(int argc, char *argv[])
 	if(argc < 3)
 	{
 		g_my_errno = MYERR_ARGS_FEW;
-		printErr(argv[0]);
+		printMyError(argv[0]);
 		return;
 	}
 	if(setValue(argv[1], atoi(argv[2])))
-		printErr(argv[1]);
+		printMyError(argv[1]);
 }
 
 void cmdUndef(int argc, char *argv[])
@@ -95,7 +95,7 @@ void cmdUndef(int argc, char *argv[])
 	for(i = 1; i < argc; i++)
 	{
 		if(removeElement(argv[i]))
-			printErr(argv[i]);
+			printMyError(argv[i]);
 	}
 }
 
@@ -104,18 +104,18 @@ void cmdAdd(int argc, char *argv[])
 	if(argc < 3)
 	{
 		g_my_errno = MYERR_ARGS_FEW;
-		printErr(argv[0]);
+		printMyError(argv[0]);
 		return;
 	}
 	element e1, e2;
 	if(getValue(argv[1], &e1))
 	{
-		printErr(argv[1]);
+		printMyError(argv[1]);
 		return;
 	}
 	if(getValue(argv[2], &e2))
 	{
-		printErr(argv[2]);
+		printMyError(argv[2]);
 		return;
 	}
 	setValue(argv[1], e1 + e2);
@@ -126,18 +126,18 @@ void cmdSub(int argc, char *argv[])
 	if(argc < 3)
 	{
 		g_my_errno = MYERR_ARGS_FEW;
-		printErr(argv[0]);
+		printMyError(argv[0]);
 		return;
 	}
 	element e1, e2;
 	if(getValue(argv[1], &e1))
 	{
-		printErr(argv[1]);
+		printMyError(argv[1]);
 		return;
 	}
 	if(getValue(argv[2], &e2))
 	{
-		printErr(argv[2]);
+		printMyError(argv[2]);
 		return;
 	}
 	setValue(argv[1], e1 - e2);
@@ -148,18 +148,18 @@ void cmdMul(int argc, char *argv[])
 	if(argc < 3)
 	{
 		g_my_errno = MYERR_ARGS_FEW;
-		printErr(argv[0]);
+		printMyError(argv[0]);
 		return;
 	}
 	element e1, e2;
 	if(getValue(argv[1], &e1))
 	{
-		printErr(argv[1]);
+		printMyError(argv[1]);
 		return;
 	}
 	if(getValue(argv[2], &e2))
 	{
-		printErr(argv[2]);
+		printMyError(argv[2]);
 		return;
 	}
 	setValue(argv[1], e1 * e2);
@@ -170,24 +170,24 @@ void cmdDiv(int argc, char *argv[])
 	if(argc < 3)
 	{
 		g_my_errno = MYERR_ARGS_FEW;
-		printErr(argv[0]);
+		printMyError(argv[0]);
 		return;
 	}
 	element e1, e2;
 	if(getValue(argv[1], &e1))
 	{
-		printErr(argv[1]);
+		printMyError(argv[1]);
 		return;
 	}
 	if(getValue(argv[2], &e2))
 	{
-		printErr(argv[2]);
+		printMyError(argv[2]);
 		return;
 	}
 	if(e2 == 0)
 	{
 		g_my_errno = MYERR_ARGS_INVALID;
-		printErr(argv[2]);
+		printMyError(argv[2]);
 		return;
 	}
 	setValue(argv[1], e1 / e2);
@@ -200,7 +200,7 @@ void cmdPrint(int argc, char *argv[])
 	for(i = 1; i < argc; i++)
 	{
 		if(getValue(argv[i], &e))
-			printErr(argv[i]);
+			printMyError(argv[i]);
 		else
 			printf("%s : %d\n", argv[i], e);
 	}
@@ -211,7 +211,7 @@ void cmdHelp(int argc, char *argv[])
 	int fd = open("doc/document.txt", O_RDONLY);
 	if(fd < 0)
 	{
-		fprintf(stderr, "Can not find doc/document.txt!\n");
+		printSystemError("doc/document.txt");
 		return;
 	}
 	char buffer[1024];

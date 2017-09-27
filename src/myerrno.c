@@ -1,5 +1,7 @@
 #include "myerrno.h"
+#include <errno.h>
 #include <stdio.h>
+#include <string.h>
 
 unsigned int g_my_errno;
 
@@ -24,14 +26,13 @@ const char *getMyError()
 	return ERR_TABLE[g_my_errno];
 }
 
-void printInfo(const char *info)
+void printSystemError(const char *msg)
 {
-	fprintf(stdout, "%s: %s\n", info, getMyError());
+	fprintf(stderr, "%s: %s\n", msg, strerror(errno));
 }
 
-void printErr(const char *err)
+void printMyError(const char *msg)
 {
-	fprintf(stderr, "%s: %s\n", err, getMyError());
+	fprintf(stderr, "%s: %s\n", msg, getMyError());
 }
-
 
