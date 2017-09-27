@@ -5,16 +5,16 @@
 #include <unistd.h>
 #include <fcntl.h>
 
-static void cmdDef(int argc, char (*argv)[64]);
-static void cmdSet(int argc, char (*argv)[64]);
-static void cmdUndef(int argc, char (*argv)[64]);
-static void cmdAdd(int argc, char (*argv)[64]);
-static void cmdSub(int argc, char (*argv)[64]);
-static void cmdMul(int argc, char (*argv)[64]);
-static void cmdDiv(int argc, char (*argv)[64]);
-static void cmdPrint(int argc, char (*argv)[64]);
-static void cmdHelp(int argc, char (*argv)[64]);
-static void cmdInit(int argc, char (*argv)[64]);
+static void cmdDef(int argc, char *argv[]);
+static void cmdSet(int argc, char *argv[]);
+static void cmdUndef(int argc, char *argv[]);
+static void cmdAdd(int argc, char *argv[]);
+static void cmdSub(int argc, char *argv[]);
+static void cmdMul(int argc, char *argv[]);
+static void cmdDiv(int argc, char *argv[]);
+static void cmdPrint(int argc, char *argv[]);
+static void cmdHelp(int argc, char *argv[]);
+static void cmdInit(int argc, char *argv[]);
 
 static const HandlerTable g_HandlerTable[] = 
 {
@@ -34,7 +34,7 @@ static const HandlerTable g_HandlerTable[] =
 //counts of commands
 #define HANDLER_COUNT (sizeof(g_HandlerTable) / sizeof(HandlerTable))
 
-int handleCmd(int argc, char (*argv)[64])
+int handleCmd(int argc, char *argv[])
 {
 	char *toLower(char*);
 	int i;
@@ -44,17 +44,13 @@ int handleCmd(int argc, char (*argv)[64])
 		if(!strcmp(g_HandlerTable[i].name, toLower(argv[0])))
 		{
 			g_HandlerTable[i].handler(argc, argv);
-			break;
+			return 0;
 		}
 	}
-	//Unknow command
-	if(i >= HANDLER_COUNT) 
-	{
-		printf("%s : Unknow command!\n", argv[0]);
-	}
+	return -1;
 }
 
-void cmdDef(int argc, char (*argv)[64])
+void cmdDef(int argc, char *argv[])
 {
 	int i;
 	for(i = 1; i < argc; i++)
@@ -65,7 +61,7 @@ void cmdDef(int argc, char (*argv)[64])
 	return;
 }
 
-void cmdSet(int argc, char (*argv)[64])
+void cmdSet(int argc, char *argv[])
 {
 	if(argc < 3)
 	{
@@ -77,7 +73,7 @@ void cmdSet(int argc, char (*argv)[64])
 		printErr(argv[1]);
 }
 
-void cmdUndef(int argc, char (*argv)[64])
+void cmdUndef(int argc, char *argv[])
 {
 	int i;
 	for(i = 1; i < argc; i++)
@@ -87,7 +83,7 @@ void cmdUndef(int argc, char (*argv)[64])
 	}
 }
 
-void cmdAdd(int argc, char (*argv)[64])
+void cmdAdd(int argc, char *argv[])
 {
 	if(argc < 3)
 	{
@@ -104,7 +100,7 @@ void cmdAdd(int argc, char (*argv)[64])
 	setValue(argv[1], e1 + e2);
 }
 
-void cmdSub(int argc, char (*argv)[64])
+void cmdSub(int argc, char *argv[])
 {
 	if(argc < 3)
 	{
@@ -121,7 +117,7 @@ void cmdSub(int argc, char (*argv)[64])
 	setValue(argv[1], e1 - e2);
 }
 
-void cmdMul(int argc, char (*argv)[64])
+void cmdMul(int argc, char *argv[])
 {
 	if(argc < 3)
 	{
@@ -138,7 +134,7 @@ void cmdMul(int argc, char (*argv)[64])
 	setValue(argv[1], e1 * e2);
 }
 
-void cmdDiv(int argc, char (*argv)[64])
+void cmdDiv(int argc, char *argv[])
 {
 	if(argc < 3)
 	{
@@ -161,7 +157,7 @@ void cmdDiv(int argc, char (*argv)[64])
 	setValue(argv[1], e1 - e2);
 }
 
-void cmdPrint(int argc, char (*argv)[64])
+void cmdPrint(int argc, char *argv[])
 {
 	int i;
 	element e;
@@ -174,7 +170,7 @@ void cmdPrint(int argc, char (*argv)[64])
 	}
 }
 
-void cmdHelp(int argc, char (*argv)[64])
+void cmdHelp(int argc, char *argv[])
 {
 	int fd = open("doc/document.txt", O_RDONLY);
 	if(fd < 0)
@@ -191,7 +187,7 @@ void cmdHelp(int argc, char (*argv)[64])
 	close(fd);
 }
 
-void cmdInit(int argc, char (*argv)[64])
+void cmdInit(int argc, char *argv[])
 {
 	removeAllElements();
 }

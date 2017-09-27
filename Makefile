@@ -1,6 +1,6 @@
-OBJ = obj/mydef.o obj/myerrno.o obj/myhandle_cmd.o obj/mylist.o
-INC = -I include
-DIRS = obj/
+OBJ := obj/mydef.o obj/myerrno.o obj/myhandle_cmd.o obj/mylist.o
+INC := -I include
+DIRS := obj/
 
 all: mydirs mydef
 
