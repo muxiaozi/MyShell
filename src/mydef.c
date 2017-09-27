@@ -74,9 +74,11 @@ int parseCmd(char *cmd)
 		if(handleCmd(argc, argv) == -1)
 		{
 			pid_t pid = fork();
-			if(pid == 0) //子进程执行
+			if(pid < 0)
 			{
-				argv[argc] = NULL;
+				fprintf(stderr, "fork: %s\n", strerror(errno));
+			}if(pid == 0) //子进程执行
+			{
 				execvp(argv[0], argv);
 				exit(0);
 			}else if(pid > 0)
@@ -116,6 +118,7 @@ int formatCmd(char *cmd, char *argv[])
 		while(*cmd != ' ' && *cmd != '\0') cmd++;
 		while(*cmd == ' ') *cmd++ = '\0';
 	}
+	argv[argc] = NULL;
 	return argc;
 }
 

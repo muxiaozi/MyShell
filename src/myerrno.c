@@ -26,12 +26,12 @@ const char *getMyError()
 
 void printInfo(const char *info)
 {
-	fprintf(stdout, "%s : %s\n", info, getMyError());
+	fprintf(stdout, "%s: %s\n", info, getMyError());
 }
 
 void printErr(const char *err)
 {
-	fprintf(stderr, "%s : %s\n", err, getMyError());
+	fprintf(stderr, "%s: %s\n", err, getMyError());
 }
 
 

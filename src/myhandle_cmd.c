@@ -5,6 +5,8 @@
 #include <unistd.h>
 #include <fcntl.h>
 
+static char *toLower(char *str);
+
 static void cmdDef(int argc, char *argv[]);
 static void cmdSet(int argc, char *argv[]);
 static void cmdUndef(int argc, char *argv[]);
@@ -34,9 +36,24 @@ static const HandlerTable g_HandlerTable[] =
 //counts of commands
 #define HANDLER_COUNT (sizeof(g_HandlerTable) / sizeof(HandlerTable))
 
+/**
+ * 转换大写到小写
+ * @param str 带转换的字符串
+ * @return 转换后的结果
+ */
+char *toLower(char *str)
+{
+	char *tmp = str;
+	while(*tmp != '\0')
+	{
+		*tmp = tolower(*tmp);
+		tmp++;
+	}
+	return str;
+}
+
 int handleCmd(int argc, char *argv[])
 {
-	char *toLower(char*);
 	int i;
 	//Search handler table
 	for(i = 0; i < HANDLER_COUNT; i++)
@@ -58,7 +75,6 @@ void cmdDef(int argc, char *argv[])
 		if(addElement(argv[i]))
 			printErr(argv[i]);
 	}
-	return;
 }
 
 void cmdSet(int argc, char *argv[])
@@ -92,9 +108,14 @@ void cmdAdd(int argc, char *argv[])
 		return;
 	}
 	element e1, e2;
-	if(getValue(argv[1], &e1) || getValue(argv[2], &e2))
+	if(getValue(argv[1], &e1))
 	{
-		fprintf(stderr, "%s or %s : %s\n", argv[1], argv[2], getMyError());
+		printErr(argv[1]);
+		return;
+	}
+	if(getValue(argv[2], &e2))
+	{
+		printErr(argv[2]);
 		return;
 	}
 	setValue(argv[1], e1 + e2);
@@ -109,9 +130,14 @@ void cmdSub(int argc, char *argv[])
 		return;
 	}
 	element e1, e2;
-	if(getValue(argv[1], &e1) || getValue(argv[2], &e2))
+	if(getValue(argv[1], &e1))
 	{
-		fprintf(stderr, "%s or %s : %s\n", argv[1], argv[2], getMyError());
+		printErr(argv[1]);
+		return;
+	}
+	if(getValue(argv[2], &e2))
+	{
+		printErr(argv[2]);
 		return;
 	}
 	setValue(argv[1], e1 - e2);
@@ -126,9 +152,14 @@ void cmdMul(int argc, char *argv[])
 		return;
 	}
 	element e1, e2;
-	if(getValue(argv[1], &e1) || getValue(argv[2], &e2))
+	if(getValue(argv[1], &e1))
 	{
-		fprintf(stderr, "%s or %s : %s\n", argv[1], argv[2], getMyError());
+		printErr(argv[1]);
+		return;
+	}
+	if(getValue(argv[2], &e2))
+	{
+		printErr(argv[2]);
 		return;
 	}
 	setValue(argv[1], e1 * e2);
@@ -143,9 +174,14 @@ void cmdDiv(int argc, char *argv[])
 		return;
 	}
 	element e1, e2;
-	if(getValue(argv[1], &e1) || getValue(argv[2], &e2))
+	if(getValue(argv[1], &e1))
 	{
-		fprintf(stderr, "%s or %s : %s\n", argv[1], argv[2], getMyError());
+		printErr(argv[1]);
+		return;
+	}
+	if(getValue(argv[2], &e2))
+	{
+		printErr(argv[2]);
 		return;
 	}
 	if(e2 == 0)
@@ -154,7 +190,7 @@ void cmdDiv(int argc, char *argv[])
 		printErr(argv[2]);
 		return;
 	}
-	setValue(argv[1], e1 - e2);
+	setValue(argv[1], e1 / e2);
 }
 
 void cmdPrint(int argc, char *argv[])
