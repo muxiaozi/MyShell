@@ -5,6 +5,7 @@
 #include <errno.h>
 #include <string.h>
 #include <stdlib.h>
+#include <signal.h>
 
 int parseCmd(char *cmd);
 char *trim(char *cmd);
@@ -13,6 +14,8 @@ char *toLower(char *str);
 
 int main(int argc, char **argv)
 {
+	signal(SIGINT, SIG_IGN);
+	signal(SIGTSTP, SIG_IGN);
 	char buffer[1024];
 	if(argc < 2) //read terminal
 	{
@@ -79,6 +82,8 @@ int parseCmd(char *cmd)
 				printSystemError("fork");
 			}else if(pid == 0) //子进程执行
 			{
+				signal(SIGINT, SIG_DFL);
+				signal(SIGTSTP, SIG_DFL);
 				if(execvp(argv[0], argv) == -1)
 				{
 					printSystemError(argv[0]);

@@ -17,6 +17,11 @@ static void cmdDiv(int argc, char *argv[]);
 static void cmdPrint(int argc, char *argv[]);
 static void cmdHelp(int argc, char *argv[]);
 static void cmdInit(int argc, char *argv[]);
+static void cmdType(int argc, char *argv[]);
+static void cmdCD(int argc, char *argv[]);
+static void cmdExport(int argc, char *argv[]);
+static void cmdEcho(int argc, char *argv[]);
+static void cmdEnv(int argc, char *argv[]);
 
 static const HandlerTable g_HandlerTable[] = 
 {
@@ -30,7 +35,12 @@ static const HandlerTable g_HandlerTable[] =
 	{"div", cmdDiv},
 	{"print", cmdPrint},
 	{"help", cmdHelp},
-	{"end", cmdInit}
+	{"end", cmdInit},
+	{"type", cmdType},
+	{"cd", cmdCD},
+	{"export", cmdExport},
+	{"echo", cmdEcho},
+	{"env", cmdEnv},
 };
 
 //counts of commands
@@ -227,4 +237,60 @@ void cmdInit(int argc, char *argv[])
 {
 	removeAllElements();
 }
+
+void cmdType(int argc, char *argv[])
+{
+
+}
+
+//TODO ...
+void cmdCD(int argc, char *argv[])
+{
+	static char oldPath[64];
+	
+	if(argc > 2)
+	{
+		g_my_errno = MYERR_ARGS_MORE;
+		printMyError(argv[0]);
+	}
+	if(!strcmp(argv[1], "-")) //上个目录
+	{
+		if(chdir(oldPath))
+		{
+			printSystemError(argv[0]);
+		}else{
+			getcwd(oldPath, sizeof(oldPath));
+		}
+	}
+	if(chdir(argv[1]))
+	{
+		printSystemError(argv[0]);
+	}else
+	{
+		strcpy(oldPath, argv[1]);
+	}
+}
+
+void cmdExport(int argc, char *argv[])
+{
+	
+}
+
+void cmdEcho(int argc, char *argv[])
+{
+	
+}
+
+void cmdEnv(int argc, char *argv[])
+{
+	extern char **environ;
+	char **tmpEnv = environ;
+	while(*tmpEnv)
+	{
+		printf("%s\n", *tmpEnv++);
+		printf("---------------------------------------------\n");
+	}
+}
+
+
 
