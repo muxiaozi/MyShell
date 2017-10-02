@@ -5,22 +5,22 @@ DIRS = bin/ obj/
 all: $(DIRS) bin/mydef
 
 bin/mydef: $(OBJ)
-	gcc -o $@ $(OBJ)
+	cc -o $@ $(OBJ)
 
-obj/mydef.o: src/mydef.c include/myhandle_cmd.h
-	gcc -o $@ -c src/mydef.c $(INC)
+obj/mydef.o: src/mydef.c include/myhandle_cmd.h include/myserver.h
+	cc -o $@ -c $< $(INC)
 
-obj/myerrno.o: src/myerrno.c include/myerrno.h 
-	gcc -o $@ -c src/myerrno.c $(INC)
+obj/myerrno.o: src/myerrno.c include/myerrno.h
+	cc -o $@ -c $< $(INC)
 
 obj/myhandle_cmd.o: src/myhandle_cmd.c include/myerrno.h include/myhandle_cmd.h include/mylist.h
-	gcc -o $@ -c src/myhandle_cmd.c $(INC)
+	cc -o $@ -c $< $(INC)
 
 obj/mylist.o: src/mylist.c include/mylist.h include/myerrno.h
-	gcc -o $@ -c src/mylist.c $(INC)
+	cc -o $@ -c $< $(INC)
 
 obj/myserver.o: src/myserver.c include/myserver.h include/myerrno.h
-	gcc -o $@ -c src/myserver.c $(INC)
+	cc -o $@ -c $< $(INC)
 
 $(DIRS):
 	mkdir -p $(DIRS)

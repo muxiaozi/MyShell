@@ -1,4 +1,5 @@
 #include "myhandle_cmd.h"
+#include "myserver.h"
 #include <stdio.h>
 #include <fcntl.h>
 #include <unistd.h>
@@ -19,12 +20,37 @@ int main(int argc, char **argv)
 	char buffer[1024];
 	if(argc < 2) //read terminal
 	{
+		// while(1)
+		// {
+		// 	write(STDOUT_FILENO, "myshell> ", 9);
+		// 	int len = read(STDIN_FILENO, buffer, sizeof(buffer));
+		// 	buffer[len - 1] = '\0';
+		// 	if(parseCmd(trim(buffer))) break;
+		// }
+		int fd = initServer(10240);
+		if(fd < 0)
+		{
+			printf("初始化serverSocket失败！\n");
+			exit(-1);
+		}else
+		{
+			dup2(fd, STDIN_FILENO);
+			dup2(fd, STDOUT_FILENO);
+		}
 		while(1)
 		{
 			write(STDOUT_FILENO, "myshell> ", 9);
 			int len = read(STDIN_FILENO, buffer, sizeof(buffer));
 			buffer[len - 1] = '\0';
-			if(parseCmd(trim(buffer))) break;
+			write(STDOUT_FILENO, buffer, strlen(buffer));
+			write(STDOUT_FILENO, "\n", 1);
+			if(parseCmd(trim(buffer)))
+			{
+				close(STDOUT_FILENO);
+				close(STDIN_FILENO);
+				close(fd);
+				break;
+			} 
 		}
 	}else //read file
 	{

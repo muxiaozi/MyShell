@@ -2,10 +2,13 @@
 #include <errno.h>
 #include <stdio.h>
 #include <string.h>
+#include <unistd.h>
 
 unsigned int g_my_errno;
 
 #define MAXERR_COUNT 7
+
+static char buffer[1024];
 
 static const char *ERR_TABLE[] = 
 {
@@ -28,11 +31,13 @@ const char *getMyError()
 
 void printSystemError(const char *msg)
 {
-	fprintf(stderr, "%s: %s\n", msg, strerror(errno));
+	sprintf(buffer, "%s: %s\n", msg, strerror(errno));
+	write(STDOUT_FILENO, buffer, strlen(buffer));
 }
 
 void printMyError(const char *msg)
 {
-	fprintf(stderr, "%s: %s\n", msg, getMyError());
+	sprintf(buffer, "%s: %s\n", msg, getMyError());
+	write(STDOUT_FILENO, buffer, strlen(buffer));
 }
 

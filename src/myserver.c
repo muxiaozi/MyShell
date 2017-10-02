@@ -1,10 +1,10 @@
 #include "myserver.h"
+#include "myerrno.h"
 #include <arpa/inet.h>
 #include <sys/socket.h>
-#include <stdio.h>
-#include <string.h>
 #include <unistd.h>
-#include <errno.h>
+#include <stdio.h>
+#include <string.h> /*memset*/
 
 int initServer(unsigned short port)
 {
@@ -26,29 +26,30 @@ int initServer(unsigned short port)
 	//绑定端口
 	if(bind(serverSocket, (struct sockaddr*)&serverAddr, sizeof(serverAddr)))
 	{
-		printf("bind: %s\n", strerror(errno));
+		printSystemError("bind");
 		return -1;
 	}
 
 	//监听，配置最大连接数
 	if(listen(serverSocket, SOMAXCONN))
 	{
-		printf("listen: %s\n", strerror(errno));
+		printSystemError("listen");
 		return -1;
 	}
 
-	
 	int clientSocket;
 	struct sockaddr_in clientAddr;
 	socklen_t clientAddrLen = sizeof(clientAddr);
 	//接收客户端的连接请求
 	if((clientSocket = accept(serverSocket, (struct sockaddr*)&clientAddr, &clientAddrLen)) < 0)
 	{
-		printf("accept: %s\n", strerror(errno));
+		printSystemError("accept");
 		return -1;
 	}
 
+	//打印客户端信息
 	printf("client: %s:%u connected!\n", inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port));
+	
 	//关闭serverSocket
 	close(serverSocket);
 
